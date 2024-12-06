@@ -1,123 +1,171 @@
 use serde::{Deserialize, Serialize};
+use std::str::FromStr;
 
-#[derive(Serialize, Deserialize, Debug)]
+/// Represents the priority level of a task.
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum TaskPriority {
-    Low,
-    Medium,
     High,
-}
-impl Default for TaskPriority {
-    fn default() -> Self { TaskPriority::Low }
+    Medium,
+    Low,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Task {
-    pub id : u64,
-    pub title : String,
-    pub description : String,
-    pub done : bool,
-    pub priority : TaskPriority,
+impl FromStr for TaskPriority {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_lowercase().as_str() {
+            "high" => Ok(TaskPriority::High),
+            "medium" => Ok(TaskPriority::Medium),
+            "low" => Ok(TaskPriority::Low),
+            _ => Err(format!("Invalid priority: {}", s)),
+        }
+    }
 }
+
+/// Represents an individual task.
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Task {
+    pub id: u64,
+    pub title: String,
+    pub description: String,
+    pub done: bool,
+    pub priority: TaskPriority,
+}
+
 impl Task {
-    pub fn new(id : u64, title : String, description : String, priority : TaskPriority) -> Self {
-        Task {
+    /// Creates a new task.
+    pub fn new(id: u64, title: String, description: String, priority: TaskPriority) -> Self {
+        Self {
             id,
             title,
             description,
-            done : false,
+            done: false,
             priority,
         }
     }
-    pub fn defualt() -> Self {
-        Task {
-            id : 0,
-            title : String::from(""),
-            description : String::from(""),
-            done : false,
-            priority : TaskPriority::Low,
-        }
-    }
-    pub fn set_title(&mut self, title : String) {
+
+    /// Updates the title of the task.
+    pub fn set_title(&mut self, title: String) {
         self.title = title;
     }
-    pub fn set_description(&mut self, description : String) {
+
+    /// Updates the description of the task.
+    pub fn set_description(&mut self, description: String) {
         self.description = description;
     }
-    pub fn set_priority(&mut self, priority : TaskPriority) {
+
+    /// Updates the priority of the task.
+    pub fn set_priority(&mut self, priority: TaskPriority) {
         self.priority = priority;
     }
+
+    /// Marks the task as done.
     pub fn mark_done(&mut self) {
         self.done = true;
     }
+
+    /// Marks the task as not done.
+    pub fn mark_undone(&mut self) {
+        self.done = false;
+    }
 }
+
+/// Represents a list of tasks.
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct TaskList {
-    pub tasks : Vec<Task>,
+    pub tasks: Vec<Task>,
 }
+
 impl TaskList {
-    fn new() -> Self {
-        TaskList {
-            tasks : Vec::new(),
-        }
+    /// Creates a new, empty task list.
+    pub fn new() -> Self {
+        Self { tasks: Vec::new() }
     }
-    fn add_task(&mut self, task : Task) {
-        self.tasks.push(task);
+
+    /// Adds a new task to the list.
+    pub fn add_task(&mut self, title: String, description: String, priority: TaskPriority) {
+        let id = self.tasks.iter().map(|task| task.id).max().unwrap_or(0) + 1;
+        self.tasks.push(Task::new(id, title, description, priority));
     }
-    fn remove_task(&mut self, id : u64) {
+
+    /// Removes a task by its ID.
+    pub fn remove_task(&mut self, id: u64) {
         self.tasks.retain(|task| task.id != id);
     }
-    fn get_task(&self, id : u64) -> Task {
-        self.tasks.iter().find(|task| task.id == id).unwrap_or(&Task::defualt()).clone()
+
+    /// Retrieves a task by its ID.
+    pub fn get_task(&self, id: u64) -> Option<&Task> {
+        self.tasks.iter().find(|task| task.id == id)
     }
-    fn get_all_tasks(&self) -> Vec<Task> {
-        self.tasks.clone()
+
+    /// Marks a task as done by its ID.
+    pub fn mark_done(&mut self, id: u64) -> Result<(), String> {
+        self.modify_task(id, |task| task.mark_done())
     }
-    fn get_done_tasks(&self) -> Vec<Task> {
-        self.tasks.iter().filter(|task| task.done).cloned().collect()
+
+    /// Marks a task as not done by its ID.
+    pub fn mark_undone(&mut self, id: u64) -> Result<(), String> {
+        self.modify_task(id, |task| task.mark_undone())
     }
-    fn get_undone_tasks(&self) -> Vec<Task> {
-        self.tasks.iter().filter(|task| !task.done).cloned().collect()
+
+    /// Retrieves all tasks.
+    pub fn all_tasks(&self) -> &Vec<Task> {
+        &self.tasks
     }
-    fn mark_done(&mut self, id : u64)-> Result<(), String> {
-        match self.tasks.iter_mut().find(|task| task.id == id) {
-            Some(task) => {
-                task.mark_done();
-                Ok(())
-            },
-            None => Err(String::from("Task not found")),
-        }
+
+    /// Retrieves all completed tasks.
+    pub fn done_tasks(&self) -> Vec<&Task> {
+        self.tasks.iter().filter(|task| task.done).collect()
     }
-    fn mark_undone(&mut self, id : u64) -> Result<(), String> {
-        match self.tasks.iter_mut().find(|task| task.id == id) {
-            Some(task) => {
-                task.done = false;
-                Ok(())
-            },
-            None => Err(String::from("Task not found")),
-        }
+
+    /// Retrieves all incomplete tasks.
+    pub fn undone_tasks(&self) -> Vec<&Task> {
+        self.tasks.iter().filter(|task| !task.done).collect()
     }
-    fn mark_all_done(&mut self) {
-        self.tasks.iter_mut().for_each(|task| task.mark_done());
-    }
-    fn mark_all_undone(&mut self) {
-        self.tasks.iter_mut().for_each(|task| task.done = false);
-    }
-    fn clear_all_tasks(&mut self) {
-        self.tasks.clear();
-    }
-    fn clear_done_tasks(&mut self) {
-        self.tasks.retain(|task| !task.done);
-    }
-    fn clear_undone_tasks(&mut self) {
-        self.tasks.retain(|task| task.done);
-    }
-    fn clear_task(&mut self, id : u64) {
-        self.tasks.retain(|task| task.id != id);
-    }
-    fn clear_tasks(&mut self, ids : Vec<u64>) {
-        self.tasks.retain(|task| !ids.contains(&task.id));
-    }
-    fn clear_all(&mut self) {
+
+    /// Clears all tasks.
+    pub fn clear_all(&mut self) {
         self.tasks.clear();
     }
 
+    /// Clears completed tasks.
+    pub fn clear_done(&mut self) {
+        self.tasks.retain(|task| !task.done);
+    }
+
+    /// Clears incomplete tasks.
+    pub fn clear_undone(&mut self) {
+        self.tasks.retain(|task| task.done);
+    }
+    pub fn alter_task_title(&mut self, id: u64, title: String) -> Result<(), String> {
+        self.modify_task(id, |task| task.set_title(title.clone()))
+    }
+
+    /// Updates a task's attributes by its ID.
+    pub fn modify_task<F>(&mut self, id: u64, mut update_fn: F) -> Result<(), String>
+    where
+        F: FnMut(&mut Task),
+    {
+        match self.tasks.iter_mut().find(|task| task.id == id) {
+            Some(task) => {
+                update_fn(task);
+                Ok(())
+            }
+            None => Err(format!("Task with ID {} not found", id)),
+        }
+    }
+    pub fn alter_task_description(&mut self, id: u64, description: String) -> Result<(), String> {
+        self.modify_task(id, |task| task.set_description(description.clone()))
+    }
+    pub fn alter_task_priority(&mut self, id: u64, priority: TaskPriority) -> Result<(), String> {
+        self.modify_task(id, |task| task.set_priority(priority.clone()))
+    }
+    pub fn alter_task_done(&mut self, id: u64, done: bool) -> Result<(), String> {
+        if done {
+            self.mark_done(id)
+        } else {
+            self.mark_undone(id)
+        }
+    }
 }
+

@@ -1,51 +1,27 @@
 mod cli;
 mod tasks;
+mod storage;
 
-use clap::{Arg, Command, ArgMatches, command};
-use crate::tasks::TaskPriority;
+use clap::{command, Arg, ArgGroup, ArgMatches, Command};
+use tasks::{TaskPriority, TaskList};
 
 fn main() {
-    let match_result = command!()
-    .about("Testing ")
-    .subcommand(
-        Command::new("add")
-        .about("Add a new task")
-                .arg(Arg::new("title"))
-                .arg(Arg::new("description"))
-                .arg(Arg::new("priority"))
-    )
-    .subcommand(
-        Command::new("remove")
-        .about("Remove a task")
-                .arg(Arg::new("id"))
-                .arg(Arg::new("title"))
-    )
-    .subcommand(
-        Command::new("list")
-        .about("List all tasks")
-                .arg(Arg::new("title"))
-                .arg(Arg::new("priority"))
+    let matches = command!()
+        .about("A simple task manager")
+        .subcommand(cli::add_command())
+        .subcommand(cli::remove_command())
+        .subcommand(cli::list_command())
+        .subcommand(cli::clear_command())
+        .subcommand(cli::alter_command())
+        .get_matches();
 
-    )
-    .get_matches();
-
-    match match_result.subcommand() {
-        Some(("add", match_result)) => add_task_2(match_result),
-        Some(("remove", match_result)) => remove_task_2(match_result),
-        Some(("list", match_result)) => list_tasks_2(match_result),
-        _ => println!("No command provided"),
+    match matches.subcommand() {
+        Some(("add", sub_matches)) => cli::handle_add(sub_matches),
+        Some(("remove", sub_matches)) => cli::handle_remove(sub_matches),
+        Some(("list", _)) => cli::handle_list(),
+        Some(("clear", sub_matches)) => cli::handle_clear(sub_matches),
+        Some(("alter", sub_matches)) => cli::handle_alter(sub_matches),
+        _ => println!("No valid command provided. Use --help for usage information."),
     }
 }
-fn add_task_2(match_result : ArgMatches) {
-    let title = match_result.get_one::<String>("title").unwrap().to_string();
-    let description = match_result.get_one::<String>("description").unwrap().to_string();
-    let priority = match_result.get_one::<TaskPriority>("priority").unwrap();
-    cli::add_task(title, description, priority);
-}
-fn remove_task_2(match_result : ArgMatches) {
-    let id = match_result.get_one::<u64>("id").unwrap();
-    cli::remove_task(*id);
-}
-fn list_tasks_2(match_result : ArgMatches) {
-    cli::list_tasks();
-}
+
