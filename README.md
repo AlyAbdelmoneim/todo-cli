@@ -54,7 +54,5 @@ To use the Todo CLI, you can run the following commands:
 - `todo clear --completed`: Remove all completed tasks.
 - `todo clear --pending`: Remove all pending tasks.
 
-## documentation
-For more information on how to use the Todo CLI, check out the [documentation](DOCUMENTATION.md).
 
 
