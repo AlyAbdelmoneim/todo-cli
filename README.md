@@ -31,3 +31,28 @@ To install and run the Todo CLI locally, follow these steps:
    ```bash
    git clone https://github.com/yourusername/todo-cli.git
    cd todo-cli
+
+2. Build the project:
+   ```bash
+
+3. Run the executable:
+   ```bash
+
+## usage
+To use the Todo CLI, you can run the following commands:
+
+- `todo add <title> <description> <priority>`: Add a new task with the specified title, description, and priority level.
+- `todo list`: List all tasks.
+- `todo list --completed`: List all completed tasks.
+- `todo list --pending`: List all pending tasks.
+- `todo update <id> <title> <description> <priority>`: Update the task with the specified ID.
+- `todo done <id>`: Mark the task with the specified ID as done.
+- `todo undone <id>`: Mark the task with the specified ID as undone.
+- `todo remove <id>`: Remove the task with the specified ID.
+- `todo clear --completed`: Remove all completed tasks.
+- `todo clear --pending`: Remove all pending tasks.
+
+## documentation
+For more information on how to use the Todo CLI, check out the [documentation](
+
+
