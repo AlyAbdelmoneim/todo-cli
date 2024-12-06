@@ -34,11 +34,11 @@ To install and run the Todo CLI locally, follow these steps:
 
 2. Build the project:
    ```bash
-cargo build
+   cargo build
 
 3. Run the executable:
    ```bash
-cargo run
+   cargo run
 
 ## usage
 To use the Todo CLI, you can run the following commands:
