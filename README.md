@@ -29,7 +29,7 @@ To install and run the Todo CLI locally, follow these steps:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/todo-cli.git
+   git clone https://github.com/AlyAbdelmoneim/todo-cli.git
    cd todo-cli
 
 2. Build the project:
