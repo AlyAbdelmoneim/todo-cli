@@ -2,8 +2,7 @@ mod cli;
 mod tasks;
 mod storage;
 
-use clap::{command, Arg, ArgGroup, ArgMatches, Command};
-use tasks::{TaskPriority, TaskList};
+use clap::command;
 
 fn main() {
     let matches = command!()
