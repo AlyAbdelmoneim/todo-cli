@@ -1,6 +1,6 @@
 use clap::{Arg, ArgMatches, Command, ArgGroup};
-use crate::tasks::{TaskPriority, TaskList};
-use crate::storage::{load_tasks, save_tasks, todo_init};
+use crate::tasks::TaskPriority;
+use crate::storage::{load_tasks, save_tasks};
 
 // Commands
 
@@ -51,12 +51,6 @@ pub fn alter_command() -> Command {
         .arg(Arg::new("done").short('D').value_parser(clap::value_parser!(bool)))
 }
 
-// Handlers
-pub fn handle_init() {
-    // Handle the 'init' command to create the .todo directory and tasks file
-    todo_init();
-    println!("Todo repository initialized.");
-}
 
 pub fn handle_add(matches: &ArgMatches) {
     let title = matches.get_one::<String>("title").unwrap().to_string();

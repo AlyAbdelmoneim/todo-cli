@@ -10,7 +10,7 @@ pub fn todo_init(){
     let current_dir = env::current_dir().expect("couldn't find current directory");
     let todo_dir = current_dir.join(".todo");
 
-    if(!todo_dir.exists()){
+    if !todo_dir.exists() {
         match fs::create_dir(&todo_dir) {
             Ok(_) => println!("created empty .todo directory"),
             Err(e) => {
@@ -24,7 +24,7 @@ pub fn todo_init(){
 
     let todo_file = todo_dir.join("todo.json");
 
-    if(!todo_file.exists()){
+    if !todo_file.exists() {
         match fs::File::create(&todo_file){
             Ok(_) => println!("todo.json file creaeted successfully"),
             Err(e) => println!("could not create todo.json file {}" ,e)
