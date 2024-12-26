@@ -1,5 +1,5 @@
 use clap::{Arg, ArgMatches, Command, ArgGroup};
-use crate::tasks::{TaskPriority, TaskList};
+use crate::tasks::TaskPriority;
 use crate::storage::{load_tasks, save_tasks};
 
 // Commands
@@ -67,7 +67,7 @@ pub fn handle_remove(matches: &ArgMatches) {
 pub fn handle_list() {
     let tasks = load_tasks();
     for task in tasks.all_tasks() {
-        println!("{:?}", task);
+        task.display();
     }
 }
 
@@ -93,16 +93,16 @@ pub fn handle_alter(matches: &ArgMatches) {
     let mut tasks = load_tasks();
 
     if let Some(title) = matches.get_one::<String>("title") {
-        tasks.alter_task_title(*id, title.clone());
+        let _ = tasks.alter_task_title(*id, title.clone());
     }
     if let Some(description) = matches.get_one::<String>("description") {
-        tasks.alter_task_description(*id, description.clone());
+       let _ =  tasks.alter_task_description(*id, description.clone());
     }
     if let Some(priority) = matches.get_one::<TaskPriority>("priority") {
-        tasks.alter_task_priority(*id, priority.clone());
+         let _ = tasks.alter_task_priority(*id, priority.clone());
     }
     if let Some(done) = matches.get_one::<bool>("done") {
-        tasks.alter_task_done(*id, *done);
+        let _ = tasks.alter_task_done(*id, *done);
     }
 
     save_tasks(&tasks);

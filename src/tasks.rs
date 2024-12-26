@@ -1,12 +1,23 @@
 use serde::{Deserialize, Serialize};
 use std::str::FromStr;
-
+use colored::*;
+// use prettytable::{Table, Row, Cell, format};
+use std::fmt::Display;
 /// Represents the priority level of a task.
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum TaskPriority {
     High,
     Medium,
     Low,
+}
+impl Display for TaskPriority {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            TaskPriority::High => write!(f, "{}", "High".red()),
+            TaskPriority::Medium => write!(f, "{}", "Medium".yellow()),
+            TaskPriority::Low => write!(f, "{}", "Low".green()),
+        }
+    }
 }
 
 impl FromStr for TaskPriority {
@@ -43,7 +54,23 @@ impl Task {
             priority,
         }
     }
-
+        pub fn display(&self) {
+        println!("{}", "-----------------------------------".blue());
+        println!("{}: {}", "ID".yellow(), self.id);
+        println!("{}: {}", "Title".green(), self.title);
+        println!("{}: {}", "Description".cyan(), self.description);
+        match self.priority {
+            TaskPriority::High => println!("{}: {}", "Priority".red(), self.priority),
+            TaskPriority::Medium => println!("{}: {}", "Priority".yellow(), self.priority),
+            TaskPriority::Low => println!("{}: {}", "Priority".green(), self.priority),
+        }
+        println!(
+            "{}: {}",
+            "Done".red(),
+            if self.done { "Yes".bold() } else { "No".bold() }
+        );
+        println!("{}", "-----------------------------------".blue());
+}
     /// Updates the title of the task.
     pub fn set_title(&mut self, title: String) {
         self.title = title;
@@ -93,11 +120,6 @@ impl TaskList {
         self.tasks.retain(|task| task.id != id);
     }
 
-    /// Retrieves a task by its ID.
-    pub fn get_task(&self, id: u64) -> Option<&Task> {
-        self.tasks.iter().find(|task| task.id == id)
-    }
-
     /// Marks a task as done by its ID.
     pub fn mark_done(&mut self, id: u64) -> Result<(), String> {
         self.modify_task(id, |task| task.mark_done())
@@ -114,14 +136,14 @@ impl TaskList {
     }
 
     /// Retrieves all completed tasks.
-    pub fn done_tasks(&self) -> Vec<&Task> {
-        self.tasks.iter().filter(|task| task.done).collect()
-    }
-
-    /// Retrieves all incomplete tasks.
-    pub fn undone_tasks(&self) -> Vec<&Task> {
-        self.tasks.iter().filter(|task| !task.done).collect()
-    }
+//    pub fn done_tasks(&self) -> Vec<&Task> {
+//        self.tasks.iter().filter(|task| task.done).collect()
+//    }
+//
+//    /// Retrieves all incomplete tasks.
+//    pub fn undone_tasks(&self) -> Vec<&Task> {
+//        self.tasks.iter().filter(|task| !task.done).collect()
+//    }
 
     /// Clears all tasks.
     pub fn clear_all(&mut self) {

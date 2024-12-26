@@ -1,6 +1,5 @@
 use crate::tasks::TaskList;
 use std::fs;
-use std::io::{self, Write};
 
 const DEFAULT_FILE: &str = ".todo.json";
 
