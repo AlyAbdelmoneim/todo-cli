@@ -3,6 +3,13 @@ use crate::tasks::TaskPriority;
 use crate::storage::{load_tasks, save_tasks};
 
 // Commands
+
+pub fn init_command() -> Command {
+    Command::new("init")
+        .about("create the todo repo")
+}
+
+
 pub fn add_command() -> Command {
     Command::new("add")
         .about("Add a new task")

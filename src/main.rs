@@ -7,6 +7,7 @@ use clap::command;
 fn main() {
     let matches = command!()
         .about("A simple task manager")
+        .subcommand(cli::init_command())
         .subcommand(cli::add_command())
         .subcommand(cli::remove_command())
         .subcommand(cli::list_command())
@@ -15,6 +16,7 @@ fn main() {
         .get_matches();
 
     match matches.subcommand() {
+        Some(("init", _)) => storage::todo_init(),
         Some(("add", sub_matches)) => cli::handle_add(sub_matches),
         Some(("remove", sub_matches)) => cli::handle_remove(sub_matches),
         Some(("list", _)) => cli::handle_list(),

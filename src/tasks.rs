@@ -135,15 +135,6 @@ impl TaskList {
         &self.tasks
     }
 
-    /// Retrieves all completed tasks.
-//    pub fn done_tasks(&self) -> Vec<&Task> {
-//        self.tasks.iter().filter(|task| task.done).collect()
-//    }
-//
-//    /// Retrieves all incomplete tasks.
-//    pub fn undone_tasks(&self) -> Vec<&Task> {
-//        self.tasks.iter().filter(|task| !task.done).collect()
-//    }
 
     /// Clears all tasks.
     pub fn clear_all(&mut self) {
