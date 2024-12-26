@@ -1,14 +1,13 @@
 use clap::{Arg, ArgMatches, Command, ArgGroup};
-use crate::tasks::TaskPriority;
-use crate::storage::{load_tasks, save_tasks};
+use crate::tasks::{TaskPriority, TaskList};
+use crate::storage::{load_tasks, save_tasks, todo_init};
 
 // Commands
 
 pub fn init_command() -> Command {
     Command::new("init")
-        .about("create the todo repo")
+        .about("Create the todo repo")
 }
-
 
 pub fn add_command() -> Command {
     Command::new("add")
@@ -53,6 +52,12 @@ pub fn alter_command() -> Command {
 }
 
 // Handlers
+pub fn handle_init() {
+    // Handle the 'init' command to create the .todo directory and tasks file
+    todo_init();
+    println!("Todo repository initialized.");
+}
+
 pub fn handle_add(matches: &ArgMatches) {
     let title = matches.get_one::<String>("title").unwrap().to_string();
     let description = matches.get_one::<String>("description").unwrap().to_string();

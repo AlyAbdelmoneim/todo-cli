@@ -12,3 +12,7 @@ derive = "1.0.0"
 colored = "2.2.0"
 tabled = "0.17.0"
 prettytable-rs = "0.10.0"
+
+[[bin]]
+name = "todo" 
+path = "src/main.rs"
